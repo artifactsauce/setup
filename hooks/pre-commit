@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -eu
+
+# *** shellcheckの実行 ***
+lint.bash() {
+    git diff-index --cached --name-only HEAD \
+        | xargs ag -l "\#\!(?:/usr/bin/env |/bin/)bash" \
+        | xargs /usr/local/bin/shellcheck --shell=bash
+}
+
+cd "$(git rev-parse --git-dir)"/../
+
+lint.bash
