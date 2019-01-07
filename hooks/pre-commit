@@ -2,9 +2,10 @@
 
 set -eu
 
-# *** shellcheckの実行 ***
+# *** Execute shellcheck ***
 lint.bash() {
     git diff-index --cached --name-only HEAD \
+        | perl -nle '/(?:\-init|\-help|\-commands|\-completions|\-sh\-shell)$/ || print' \
         | xargs ag -l "\#\!(?:/usr/bin/env |/bin/)bash" \
         | xargs /usr/local/bin/shellcheck --shell=bash
 }
@@ -12,3 +13,6 @@ lint.bash() {
 cd "$(git rev-parse --git-dir)"/../
 
 lint.bash
+
+# perl -MPath::Class -I$(dirname $SOURCE_FILE) -nl -e '$_ !~/^\. ((\$\(dirname \$0\))?(.+))/ ? print $_ : $2 ? print file($INC[0].$3)->slurp : print file($3)->slurp' $SOURCE_FILE > $TARGET_FILE
+

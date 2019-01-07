@@ -4,10 +4,12 @@
 
 set -eu
 
-. $(dirname $0)/../../lib/bash/functions
-. $(dirname $0)/../../lib/bash/logger
 
-: ${PROGLETS_REPOSITORY_HOME:="git@github.com:artifactsauce"}
+LIBDIR="$(${FINDPATH} $(dirname "$0"))"
+. "${LIBDIR}/../lib/bash/functions"
+. "${LIBDIR}/../lib/bash/logger"
+
+: ${PROGLETS_REPOSITORY_URI:="git@github.com:artifactsauce"}
 : ${PROGLETS_DEPLOY_DIRECTORY:="$HOME/src/github.com/artifactsauce"}
 
 _create.required.directories() {
@@ -153,6 +155,14 @@ _install.node() {
   mpkg install npm
 }
 
+bootstrap.config.set() {
+  # Mute start up sound
+  sudo nvram SystemAudioVolume=%80
+
+  # https://mag.torumade.nu/?p=14526
+  # https://news.mynavi.jp/article/osxhack-184/
+}
+
 _create.required.directories
 _clone.initial_repository
 _clone.dotfile_repository
@@ -171,6 +181,7 @@ _install.python
 _install.perl
 _install.node
 
+bootstrap.config.set
 
 echo "$(date) [INFO] Finished"
 exit 0
